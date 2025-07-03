@@ -1,8 +1,8 @@
 import socket
-import multiprocessing as mp
 
 def receive(connectedClient):
-    while True:
+    message = "waiting to receive data"
+    while True and len(message) != 0:
         try:
             message = connectedClient.recv(1024).decode('ascii')
             print(message)
@@ -10,9 +10,9 @@ def receive(connectedClient):
             print('An error occured')
             connectedClient.close()
             break
+    print("connection to server broken")
 
 if __name__ == "__main__":
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    client.connect(('127.0.0.1', 55555))
-    client_process = mp.Process(target=receive, args=(client))
-    client_process.start()
+    client.connect(('127.0.0.1', 9071))
+    receive(client)
