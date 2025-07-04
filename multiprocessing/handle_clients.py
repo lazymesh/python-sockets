@@ -1,21 +1,18 @@
 import multiprocessing as mp
 import time
 
-clients = []
 
-def broadcast(message):
-    print("elients")
+
+def broadcast(message, clients):
     for client in clients:
         client.send(message)
 
-def handler(client):
-    print('finding out error pint')
+def handler(clients, client):
     while True:
         try:
-            message = "message from server".encode('ascii')
+            message = f"message from server {client}".encode('ascii')
             time.sleep(1)
-            print(message)
-            broadcast(message)
+            broadcast(message, clients)
         except:
             clients.remove(client)
             client.close()
@@ -23,14 +20,16 @@ def handler(client):
 
     
 def receive(sock):
-    while True:
-        print("receive is reached")
-        client, address = sock.accept()
-        print(f'Connected wtih {str(address)}')
+    with mp.Manager() as manager:
+        clients = manager.list()
+        while True:
+            print("receive is reached")
+            client, address = sock.accept()
+            print(f'Connected wtih {str(address)}')
 
-        clients.append(client)
+            clients.append(client)
 
-        client.send('Connected to the server'.encode('ascii'))
-        
-        mProcess = mp.Process(target=handler, args=(client,))
-        mProcess.start()
+            client.send('Connected to the server'.encode('ascii'))
+            
+            mProcess = mp.Process(target=handler, args=(clients, client))
+            mProcess.start()

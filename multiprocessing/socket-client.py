@@ -14,5 +14,5 @@ def receive(connectedClient):
 
 if __name__ == "__main__":
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    client.connect(('127.0.0.1', 9071))
+    client.connect(('127.0.0.1', 9070))
     receive(client)
